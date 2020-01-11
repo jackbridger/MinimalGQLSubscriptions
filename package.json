@@ -1,0 +1,19 @@
+{
+  "name": "minimal-gql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js --exec babel-node"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/client": "^3.0.0-beta.20",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "gql": "^1.1.2",
+    "graphql-yoga": "^1.18.3",
+    "nodemon": "^2.0.2"
+  }
+}
