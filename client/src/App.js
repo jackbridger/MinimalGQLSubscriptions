@@ -35,7 +35,7 @@ const TODO_MUTATION = gql`
 
 function App() {
   const [ToDos, setToDos] = React.useState([]);
-  const [addTodo, { }] = useMutation(TODO_MUTATION);
+  const [addTodo] = useMutation(TODO_MUTATION);
 
   const { subscribeToMore, onCompleted, ...result } = useQuery(
     TODO_QUERY,
