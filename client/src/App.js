@@ -3,7 +3,7 @@ import './App.css';
 import gql from 'graphql-tag';
 import { useSubscription, useQuery, useMutation, } from "@apollo/react-hooks"
 import ToDoList from "./ToDoList"
-import { Container, Header, Button, Form, Input } from "semantic-ui-react"
+import { Container, Input } from "@material-ui/core"
 
 const TODO_SUBSCRIPTION = gql`
 subscription{
@@ -41,7 +41,7 @@ function App() {
     TODO_QUERY,
     {
       shouldResubscribe: true,
-      onCompleted: (result) => setToDos(result.getTodos)
+      onCompleted: (result) => setToDos(todos => result.getTodos)
     }
   )
   const {
@@ -56,19 +56,25 @@ function App() {
 
   return (
     <Container className="App">
-      <Header as="h1">My shopping list</Header>
+      <h1>My shopping list</h1>
 
       <ToDoList
         ToDos={ToDos}
 
       />
-      <Form onSubmit={(e) => {
+      <form onSubmit={(e) => {
         e.preventDefault()
         addTodo({ variables: { title: newToDo } })
+        setNewToDo("")
       }}>
-        <Input type="text" />
-        <Input type="submit" value={newToDo} onChange={(e) => setNewToDo(e.target.value)} />
-      </Form>
+        <label>
+          New To Do <br />
+          <Input type="text" value={newToDo} onChange={(e) => setNewToDo(e.target.value)} />
+        </label>
+        <Container>
+          <Input type="submit" value="Submit" />
+        </Container>
+      </form>
     </Container >
 
   );
