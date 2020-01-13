@@ -1,8 +1,20 @@
 import { GraphQLServer, PubSub } from "graphql-yoga"
-
 const pubsub = new PubSub();
-const db = { todos: [{ id: "1", title: "buy bread" }, { id: "2", title: "buy milk" }] }
-
+const createRandomId = () => {
+    const randID = Math.floor(Math.random() * 1000000);
+    return `${randID}`;
+}
+const db = {
+    todos:
+        [{
+            id: createRandomId(),
+            title: "buy bread"
+        },
+        {
+            id: createRandomId(),
+            title: "buy milk"
+        }]
+};
 const typeDefs = `
 type Query {
     getTodos: [ToDo]!
@@ -20,27 +32,27 @@ type ToDo {
 }
 
 `
+const TODO = "TODO"
+
 const resolvers = {
     Query: {
-        getTodos: (_, __, { db, pubsub }) => {
-            console.log("came into the query", db.todos)
+        getTodos: (_, __, { db }) => {
             return db.todos;
         }
     },
     Mutation: {
         createToDo: (_, { title }) => {
-            const randID = Math.floor(Math.random() * 1000000)
-            const id = `${randID}`
-            db.todos.push({ id, title })
-            const ToDo = { id, title }
-            pubsub.publish("ToDo", { ToDo })
-            return ToDo
+            const id = createRandomId();
+            db.todos.push({ id, title });
+            const ToDo = { id, title };
+            pubsub.publish(TODO, { ToDo });
+            return ToDo;
         }
     },
     Subscription: {
         ToDo: {
-            subscribe(parent, { }, { db, pubsub }, info) {
-                return pubsub.asyncIterator("ToDo")
+            subscribe(_, __, { pubsub }) {
+                return pubsub.asyncIterator(TODO);
             }
         }
     }

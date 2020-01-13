@@ -5,14 +5,6 @@ import { useSubscription, useQuery, useMutation, } from "@apollo/react-hooks"
 import ToDoList from "./ToDoList"
 import { Container, Input } from "@material-ui/core"
 
-const TODO_SUBSCRIPTION = gql`
-subscription{
-  ToDo{
-    id
-    title
-  }
-}
-`;
 
 const TODO_QUERY = gql`
 query{
@@ -31,17 +23,25 @@ const TODO_MUTATION = gql`
     }
 }
 `
-
+const TODO_SUBSCRIPTION = gql`
+subscription{
+  ToDo{
+    id
+    title
+  }
+}
+`;
 
 function App() {
   const [ToDos, setToDos] = React.useState([]);
-  const [addTodo] = useMutation(TODO_MUTATION);
+  const [addToDoMutation] = useMutation(TODO_MUTATION);
+  const [inputValue, setInputValue] = React.useState("")
 
-  const { subscribeToMore, onCompleted, ...result } = useQuery(
+  const { subscribeToMore, onCompleted } = useQuery(
     TODO_QUERY,
     {
       shouldResubscribe: true,
-      onCompleted: (result) => setToDos(todos => result.getTodos)
+      onCompleted: (result) => setToDos(result.getTodos)
     }
   )
   const {
@@ -52,24 +52,21 @@ function App() {
       setToDos(todos => todos.concat(subscriptionData.data.ToDo))
     }
   })
-  const [newToDo, setNewToDo] = React.useState("")
 
   return (
     <Container className="App">
-      <h1>My shopping list</h1>
-
+      <h1>My To Dos</h1>
       <ToDoList
         ToDos={ToDos}
-
       />
       <form onSubmit={(e) => {
         e.preventDefault()
-        addTodo({ variables: { title: newToDo } })
-        setNewToDo("")
+        addToDoMutation({ variables: { title: inputValue } })
+        setInputValue("")
       }}>
         <label>
-          New To Do <br />
-          <Input type="text" value={newToDo} onChange={(e) => setNewToDo(e.target.value)} />
+          New ToDo <br />
+          <Input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
         </label>
         <Container>
           <Input type="submit" value="Submit" />
