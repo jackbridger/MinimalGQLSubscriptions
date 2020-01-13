@@ -32,7 +32,7 @@ type ToDo {
 }
 
 `
-const TODO = "TODO"
+const TODOS_CHANGED = "TODOS_CHANGED"
 
 const resolvers = {
     Query: {
@@ -45,14 +45,14 @@ const resolvers = {
             const id = createRandomId();
             db.todos.push({ id, title });
             const ToDo = { id, title };
-            pubsub.publish(TODO, { ToDo });
+            pubsub.publish(TODOS_CHANGED, { ToDo });
             return ToDo;
         }
     },
     Subscription: {
         ToDo: {
             subscribe(_, __, { pubsub }) {
-                return pubsub.asyncIterator(TODO);
+                return pubsub.asyncIterator(TODOS_CHANGED);
             }
         }
     }
