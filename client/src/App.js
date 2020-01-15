@@ -33,9 +33,9 @@ subscription{
 `;
 
 function App() {
-  const [ToDos, setToDos] = React.useState([]);
-  const [addToDoMutation] = useMutation(TODO_MUTATION);
+  const [toDos, setToDos] = React.useState([]);
   const [inputValue, setInputValue] = React.useState("")
+  const [addToDoMutation] = useMutation(TODO_MUTATION);
 
   const { subscribeToMore, onCompleted } = useQuery(
     TODO_QUERY,
@@ -57,12 +57,14 @@ function App() {
     <Container className="App">
       <h1>My To Dos</h1>
       <ToDoList
-        ToDos={ToDos}
+        ToDos={toDos}
       />
-      <form onSubmit={(e) => {
+      <form onSubmit={async (e) => {
         e.preventDefault()
-        addToDoMutation({ variables: { title: inputValue } })
+        const mutation = await addToDoMutation({ variables: { title: inputValue } })
+        console.log("mutatoin", mutation)
         setInputValue("")
+
       }}>
         <label>
           New ToDo <br />
