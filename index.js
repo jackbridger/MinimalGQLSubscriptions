@@ -1,5 +1,6 @@
 import { GraphQLServer, PubSub } from "graphql-yoga"
 const pubsub = new PubSub();
+const TODOS_CHANGED = "TODOS_CHANGED"
 const createRandomId = () => {
     const randID = Math.floor(Math.random() * 1000000);
     return `${randID}`;
@@ -23,7 +24,7 @@ type Mutation {
     createToDo(title: String): ToDo!
 }
 type Subscription {
-    ToDo: ToDo!
+    ToDoChanged: ToDo!
 
 }
 type ToDo {
@@ -32,7 +33,6 @@ type ToDo {
 }
 
 `
-const TODOS_CHANGED = "TODOS_CHANGED"
 
 const resolvers = {
     Query: {
@@ -44,13 +44,13 @@ const resolvers = {
         createToDo: (_, { title }) => {
             const id = createRandomId();
             db.todos.push({ id, title });
-            const ToDo = { id, title };
-            pubsub.publish(TODOS_CHANGED, { ToDo });
-            return ToDo;
+            const newToDo = { id, title };
+            pubsub.publish(TODOS_CHANGED, { ToDoChanged: newToDo });
+            return newToDo;
         }
     },
     Subscription: {
-        ToDo: {
+        ToDoChanged: {
             subscribe(_, __, { pubsub }) {
                 return pubsub.asyncIterator(TODOS_CHANGED);
             }

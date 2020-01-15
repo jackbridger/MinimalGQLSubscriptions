@@ -25,7 +25,7 @@ const TODO_MUTATION = gql`
 `
 const TODO_SUBSCRIPTION = gql`
 subscription{
-  ToDo{
+  ToDoChanged{
     id
     title
   }
@@ -49,7 +49,7 @@ function App() {
     loading,
   } = useSubscription(TODO_SUBSCRIPTION, {
     onSubscriptionData: ({ subscriptionData }) => {
-      setToDos(todos => todos.concat(subscriptionData.data.ToDo))
+      setToDos(todos => todos.concat(subscriptionData.data.ToDoChanged))
     }
   })
 
