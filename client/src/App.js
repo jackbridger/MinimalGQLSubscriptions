@@ -12,8 +12,7 @@ query{
     id
     title
   }
-}
-`;
+}`;
 
 const TODO_MUTATION = gql`
   mutation CreateToDo($title:String) {
@@ -21,16 +20,15 @@ const TODO_MUTATION = gql`
       title
       id
     }
-}
-`
+}`;
+
 const TODO_SUBSCRIPTION = gql`
 subscription{
   ToDoChanged{
     id
     title
   }
-}
-`;
+}`;
 
 function App() {
   const [toDos, setToDos] = React.useState([]);
@@ -38,50 +36,52 @@ function App() {
   const [addToDoMutation] = useMutation(TODO_MUTATION);
   const {
     subscribeToMore,
-    data: toDoQuery,
-    loading: loadingQuery,
-    error: errorQuery
+    data,
+    loading,
+    error
   } = useQuery(TODO_QUERY)
 
-
   React.useEffect(() => {
-    if (errorQuery) {
-      console.error(errorQuery)
+    if (error) {
+      console.error(error)
     }
-    if (toDoQuery) {
-      setToDos(toDoQuery.toDos)
+    if (data) {
+      setToDos(data.toDos)
     }
-  }, [loadingQuery])
+  }, [loading])
 
+  const subscribeToNewToDos = () =>
+    subscribeToMore({
+      document: TODO_SUBSCRIPTION,
+      updateQuery: (currentToDos, { subscriptionData }) => {
+        if (!subscriptionData.data) return currentToDos;
+        const newToDo = subscriptionData.data.ToDoChanged;
+        const updatedToDos = currentToDos.toDos.concat(newToDo)
+        setToDos(updatedToDos)
+        return { toDos: updatedToDos }
+      }
+    })
 
   return (
     <Container className="App">
       <h1>My To Dos</h1>
-      {loadingQuery || errorQuery ? <p>Loading...</p> :
+      {loading
+        ?
+        <p>Loading...</p>
+        :
         <ToDoList
           ToDos={toDos}
-          subscribeToNewToDos={() =>
-            subscribeToMore({
-              document: TODO_SUBSCRIPTION,
-              updateQuery: (prev, { subscriptionData }) => {
-                if (!subscriptionData.data) return prev;
-                const newToDo = subscriptionData.data.ToDoChanged;
-                const updatedToDoList = prev.toDos.concat(newToDo)
-                setToDos(updatedToDoList)
-                return { toDos: updatedToDoList }
-              }
-            })
-          }
+          subscribeToNewToDos={subscribeToNewToDos}
         />
       }
 
       <form onSubmit={async (e) => {
-        e.preventDefault()
-        await addToDoMutation({ variables: { title: inputValue } })
-        setInputValue("")
+        e.preventDefault();
+        await addToDoMutation({ variables: { title: inputValue } });
+        setInputValue("");
       }}>
         <label>
-          New ToDo <br />
+          New To Do <br />
           <Input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
         </label>
         <Container>
