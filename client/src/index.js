@@ -9,9 +9,7 @@ import { WebSocketLink } from 'apollo-link-ws';
 
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
-// import { InMemoryCache } from "@apollo/react-hooks"
 
-// import { OperationDefinitionNode } from 'graphql';
 
 const httpLink = new HttpLink({
     uri: 'http://localhost:4000/'
@@ -39,21 +37,10 @@ const terminatingLink = split(
 
 const link = ApolloLink.from([terminatingLink]);
 
-const defaultApolloOptions = {
-    watchQuery: {
-        fetchPolicy: 'network-only',
-        errorPolicy: 'ignore',
-    },
-    query: {
-        fetchPolicy: 'network-only',
-        errorPolicy: 'all',
-    },
-}
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link,
-    defaultOptions: defaultApolloOptions
+    link
 });
 
 ReactDOM.render(<ApolloProvider client={client}>

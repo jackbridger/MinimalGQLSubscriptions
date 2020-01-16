@@ -1,7 +1,7 @@
 import React from 'react'
 import ToDo from "./ToDo"
-export default function ToDoList({ ToDos, }) {
-
+export default function ToDoList({ ToDos, subscribeToNewToDos }) {
+    React.useEffect(() => subscribeToNewToDos(), []);
 
     return (
 
