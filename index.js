@@ -10,7 +10,7 @@ const createRandomId = () => {
 }
 // Very simple database substitute containing our To Dos.
 const db = {
-    todos:
+    toDos:
         [{
             id: createRandomId(),
             title: "buy bread"
@@ -41,22 +41,30 @@ type ToDo {
 // How we handle graphQL operations from the front end
 const resolvers = {
     Query: {
+        // Return all To Dos
         toDos: (_, __, { db }) => {
-            return db.todos;
+            return db.toDos;
         }
     },
     Mutation: {
         createToDo: (_, { title }) => {
             const id = createRandomId();
             const newToDo = { id, title };
-            db.todos.push(newToDo);
+            db.toDos.push(newToDo);
+            // Notify susbscriptions listening to the TODOS_CHANGED channel 
+            // That a to do has changed and sending through that the newToDo as 
+            // the ToDoChanged payload
             pubsub.publish(TODOS_CHANGED, { ToDoChanged: newToDo });
             return newToDo;
         }
     },
     Subscription: {
+        // Note: "Subscriptions resolvers are not a function, 
+        // but an object with subscribe method, that returns AsyncIterable." 
         ToDoChanged: {
             subscribe(_, __, { pubsub }) {
+                // Listen for TODOS_CHANGED changed and then forward the provided
+                // ToDoChanged payload to clients who have subscribed to ToDoChanged
                 return pubsub.asyncIterator(TODOS_CHANGED);
             }
         }
