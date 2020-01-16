@@ -18,7 +18,7 @@ const db = {
 };
 const typeDefs = `
 type Query {
-    getTodos: [ToDo]!
+    toDos: [ToDo]!
 }
 type Mutation {
     createToDo(title: String): ToDo!
@@ -36,15 +36,15 @@ type ToDo {
 
 const resolvers = {
     Query: {
-        getTodos: (_, __, { db }) => {
+        toDos: (_, __, { db }) => {
             return db.todos;
         }
     },
     Mutation: {
         createToDo: (_, { title }) => {
             const id = createRandomId();
-            db.todos.push({ id, title });
             const newToDo = { id, title };
+            db.todos.push(newToDo);
             pubsub.publish(TODOS_CHANGED, { ToDoChanged: newToDo });
             return newToDo;
         }
