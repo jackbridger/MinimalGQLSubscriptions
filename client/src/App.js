@@ -5,7 +5,7 @@ import { useQuery, useMutation, } from "@apollo/react-hooks"
 import ToDoList from "./ToDoList"
 import { Container, Input } from "@material-ui/core"
 
-
+// Get all To Dos
 const TODO_QUERY = gql`
 query{
 	toDos{
@@ -14,6 +14,7 @@ query{
   }
 }`;
 
+// Create a To do
 const TODO_MUTATION = gql`
   mutation CreateToDo($title:String) {
     createToDo(title:$title) {
@@ -22,6 +23,7 @@ const TODO_MUTATION = gql`
     }
 }`;
 
+// Subscribe to modified (created) To Dos 
 const TODO_SUBSCRIPTION = gql`
 subscription{
   ToDoChanged{
