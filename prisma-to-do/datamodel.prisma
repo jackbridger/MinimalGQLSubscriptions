@@ -1,0 +1,9 @@
+type User {
+  id: ID! @id
+  name: String!
+}
+
+type ToDo {
+  id: ID! @id
+  title: String!
+}
