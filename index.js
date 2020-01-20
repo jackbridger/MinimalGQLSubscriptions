@@ -57,37 +57,26 @@ const resolvers = {
         }
     },
     Mutation: {
-        createToDo: (parent, { title }, { prisma }, info) => {
-            return prisma.mutation.createToDo({
+        createToDo: async (parent, { title }, { prisma, pubsub }, info) => {
+
+            const newToDo = await prisma.mutation.createToDo({
                 data: {
                     title
                 }
             })
+            pubsub.publish(TODOS_CHANGED, { ToDoChanged: newToDo });
+            return newToDo
         }
     },
     Subscription: {
         // Note: "Subscriptions resolvers are not a function, 
         // but an object with subscribe method, that returns AsyncIterable." 
         ToDoChanged: {
-            subscribe: async (parent, args, { prisma }, info) => {
-                // console.log("came into to do subscribe")
-                // console.log("info is ", info.operation.selectionSet.selections[0].selectionSet)
-                console.log("waiting for pris sub")
+            subscribe(_, __, { pubsub }) {
+                // Listen for TODOS_CHANGED changed and then forward the provided
+                // ToDoChanged payload to clients who have subscribed to ToDoChanged
+                return pubsub.asyncIterator(TODOS_CHANGED);
 
-                const prismaSub = await prisma.subscription.toDo({}, info)
-                console.log("prisma sub is ", prismaSub)
-                return prismaSub
-            },
-            resolve: payload => {
-                // console.log("payload is... !", payload)
-                // console.log("payload is... !", payload.ToDoChanged.toString())
-                return {
-                    ToDo: {
-                        id: "12312312312",
-                        title: "test"
-                    }
-                }
-                return payload
             }
         }
         // ToDoChanged: {
