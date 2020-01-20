@@ -1,4 +1,5 @@
-endpoint: http://localhost:4466
+#endpoint: ${env:PRISMA_ENDPOINT}
+endpoint: https://eu1.prisma.sh/jack-bridger-418b15/demo/dev/prisma-to-do/dev
 datamodel: datamodel.prisma
 generate:
   - generator: graphql-schema
