@@ -43,6 +43,11 @@ type ToDo {
 }
 
 `
+
+function newToDoSubscribe(parent, args, { prisma }, info) {
+    return prisma.subscribe.toDo({}).node()
+}
+
 // How we handle graphQL operations from the front end
 const resolvers = {
     Query: {
@@ -74,12 +79,32 @@ const resolvers = {
                 return prismaSub
             },
             resolve: payload => {
-                console.log("payload is... !", payload)
-                console.log("payload is... !", payload.ToDoChanged.toString())
-
+                // console.log("payload is... !", payload)
+                // console.log("payload is... !", payload.ToDoChanged.toString())
+                return {
+                    ToDo: {
+                        id: "12312312312",
+                        title: "test"
+                    }
+                }
                 return payload
             }
         }
+        // ToDoChanged: {
+        //     subscribe: newToDoSubscribe,
+        //     resolve: payload => {
+        //         console.log("payload is... !", payload)
+        //         console.log("payload is... !")
+        //         const parsed = JSON.parse(JSON.stringify(payload))
+        //         console.log("parsed", parsed.ToDoChanged)
+        // return {
+        //     id: "12312312312",
+        //     title: "test"
+        // }
+        //     }
+        // },
+
+
     }
 }
 // Creating neew GQL server running on port 4000, we pass in our schema, resolvers and our 

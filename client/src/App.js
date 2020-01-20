@@ -66,6 +66,7 @@ function App() {
       document: TODO_SUBSCRIPTION, // the gql subscription operation
       // How do we update our ToDos data when subscription data comes through.
       updateQuery: (currentToDos, { subscriptionData }) => {
+        console.log("received a to do", subscriptionData)
         if (!subscriptionData.data) return currentToDos;
         const newToDo = subscriptionData.data.ToDoChanged;
         const updatedToDos = currentToDos.toDos.concat(newToDo)
